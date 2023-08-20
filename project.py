@@ -1,16 +1,35 @@
 from tkinter import Tk
 from design import Design
+import os
+import platform
 
 root = Tk()
 design = Design(root)
-app_list = []
 
-# sample data
-file = open("sample-data.txt")
-for line in file:
-    design.app_list_listbox.insert("end", line.splitlines())
-    app_list.append(line.splitlines())
+def main():
+    global app_list
+    print(get_adb_folder())
+    
+    app_list = []
+    
+    file = open("sample-data.txt")
+    for line in file:
+        app_list.append(line.splitlines())
+        design.app_list_listbox.insert("end", line.splitlines())
+    
+    root.mainloop()
+    
 
+# detect user's OS
+def get_OS():
+    return platform.system().lower()
+
+def get_adb_folder():
+    return os.path.join(os.getcwd(), ("adb\\platform-tools\\" + get_OS()))
+
+def run_command(command):
+    p = os.popen(command)
+    return p.read()
 
 # get search key
 def Scankey(event):
@@ -30,10 +49,13 @@ def Scankey(event):
 
     Update(data)
 
+
 design.search_box.bind("<KeyRelease>", Scankey)
+
 
 # update the listbox
 def Update(data):
+    global app_list
     design.app_list_listbox.delete(0, "end")
 
     # put new data
@@ -41,4 +63,5 @@ def Update(data):
         design.app_list_listbox.insert("end", item)
 
 
-root.mainloop()
+if __name__ == "__main__":
+    main()

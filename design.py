@@ -11,7 +11,7 @@ class Design:
         self.canvas = Canvas(self.root, height=450, width=900)
         self.canvas.pack()
 
-        self.frame_app_list = Frame(self.root, bg="#D5D8DC")
+        self.frame_app_list = Frame(self.root)
         self.frame_app_list.place(relx=0.04, rely=0.065, relwidth=0.45, relheight=0.85)
 
         self.frame_device_config = Frame(self.root, bg="#D5D8DC")
@@ -35,10 +35,14 @@ class Design:
         self.refresh_app_list_btn = Button(self.frame_app_func, text="Refresh app list", bd="5", font="Arial 12")
         self.refresh_app_list_btn.pack(side="top", pady=7)
 
+
+        self.search_box = Entry(self.frame_app_list, font="Arial 12")
+        self.search_box.pack(fill="both")
+
         self.app_list_listbox = Listbox(self.frame_app_list, font="Arial 12")
-        self.app_list_listbox.pack(side=LEFT, fill="both", expand=True)
+        self.app_list_listbox.pack(side=LEFT, fill="both", expand=True, pady=10)
 
         self.scrollbar = Scrollbar(self.frame_app_list)
-        self.scrollbar.pack(side=RIGHT, fill=BOTH)
+        self.scrollbar.pack(side=RIGHT, fill=BOTH, pady=10)
         self.app_list_listbox.config(yscrollcommand=self.scrollbar.set)
         self.scrollbar.config(command=self.app_list_listbox.yview)

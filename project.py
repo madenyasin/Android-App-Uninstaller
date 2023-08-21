@@ -12,7 +12,7 @@ apps = []
 
 def main():
     # global app_list
-    app_list = []
+    # app_list = []
 
     list_devices()
 
@@ -45,11 +45,11 @@ def Scankey(event):
 
     if val == "":
         for app in apps:
-            data.append(app)
+            data.append(app.replace("package:", ""))
     else:
         for item in apps:
             if val.lower() in str(item).lower():
-                data.append(item)
+                data.append(item.replace("package:", ""))
 
     Update(data)
 
@@ -59,11 +59,12 @@ design.search_box.bind("<KeyRelease>", Scankey)
 
 # update the listbox
 def Update(data):
-    global app_list
+    # global app_list
     design.app_list_listbox.delete(0, "end")
 
     # put new data
     for item in data:
+        # print(item)
         design.app_list_listbox.insert("end", item)
 
 
@@ -122,9 +123,15 @@ def modified_cmb(event):
 
 design.device_chose_cmb.bind('<<ComboboxSelected>>', modified_cmb)
 
-def a():
+def uninstall_app():
+    package_name = design.app_list_listbox.get(design.app_list_listbox.curselection())   
+
+    command = f"adb -s {serial_number} shell pm uninstall --user 0 {package_name}"
+    print(run_command(get_adb_folder(), command)) 
     
     ...
-design.uninstall_app_btn.config(command=a)
+
+design.uninstall_app_btn.config(command=uninstall_app)
+
 if __name__ == "__main__":
     main()

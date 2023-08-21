@@ -7,20 +7,11 @@ import tkinter as tk
 root = Tk()
 design = Design(root)
 
+package_names = []
 serial_number = ""
-apps = []
 
 def main():
-    # global app_list
-    # app_list = []
-
-    list_devices()
-
-    # file = open("sample-data.txt")
-    # for line in file:
-    #     app_list.append(line.splitlines())
-    #     design.app_list_listbox.insert("end", line.splitlines())
-    
+    list_devices()    
     root.mainloop()
     
 # detect user's OS
@@ -37,19 +28,18 @@ def run_command(directory, command):
 
 # get search key
 def Scankey(event):
-    global apps
-    # global app_list
+    global package_names
     data = []
     val = event.widget.get()
     # print(val)
 
     if val == "":
-        for app in apps:
-            data.append(app.replace("package:", ""))
+        for item in package_names:
+            data.append(item)
     else:
-        for item in apps:
+        for item in package_names:
             if val.lower() in str(item).lower():
-                data.append(item.replace("package:", ""))
+                data.append(item)
 
     Update(data)
 
@@ -94,8 +84,9 @@ design.refresh_devices_btn.config(command=list_devices)
 
 
 def list_apps():
-    global apps
+    apps = []
     global serial_number
+    global package_names
 
     design.app_list_listbox.delete(0, tk.END) #listbox clear
 
@@ -109,8 +100,12 @@ def list_apps():
         # print(serial_number)
         command = f"adb -s {serial_number} shell pm list packages"
         apps = run_command(get_adb_folder(), command).splitlines()
+
+        package_names = []
         for app in apps:
+            package_names.append(app.replace("package:", ""))
             design.app_list_listbox.insert("end", app.replace("package:", ""))
+
     
 design.refresh_app_list_btn.config(command=list_apps)
 
@@ -124,13 +119,19 @@ def modified_cmb(event):
 design.device_chose_cmb.bind('<<ComboboxSelected>>', modified_cmb)
 
 def uninstall_app():
+    global package_names
     package_name = design.app_list_listbox.get(design.app_list_listbox.curselection())   
 
     command = f"adb -s {serial_number} shell pm uninstall --user 0 {package_name}"
-    print(run_command(get_adb_folder(), command)) 
-    
-    ...
+    response = run_command(get_adb_folder(), command)
 
+    if "success" in response.lower():
+        print(response)
+        package_names.remove(package_name)
+        list_apps()
+    else:
+        print(response)
+    
 design.uninstall_app_btn.config(command=uninstall_app)
 
 if __name__ == "__main__":

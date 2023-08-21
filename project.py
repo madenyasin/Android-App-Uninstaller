@@ -96,8 +96,10 @@ def list_apps():
     global apps
     global serial_number
 
+    design.app_list_listbox.delete(0, tk.END) #listbox clear
+
     design.search_box.delete(0, tk.END)  # Clear existing text
-    design.search_box.insert(0, "")  # Insert new text
+    # design.search_box.insert(0, "")  # Insert new text
 
     if design.device_chose_cmb.get() in ["No device connected!", "Select Your Device"]:
         print("SELECT DEVİCE!!!!!")
@@ -107,7 +109,7 @@ def list_apps():
         command = f"adb -s {serial_number} shell pm list packages"
         apps = run_command(get_adb_folder(), command).splitlines()
         for app in apps:
-            design.app_list_listbox.insert("end", app)
+            design.app_list_listbox.insert("end", app.replace("package:", ""))
     
 design.refresh_app_list_btn.config(command=list_apps)
 
@@ -120,6 +122,9 @@ def modified_cmb(event):
 
 design.device_chose_cmb.bind('<<ComboboxSelected>>', modified_cmb)
 
-
+def a():
+    
+    ...
+design.uninstall_app_btn.config(command=a)
 if __name__ == "__main__":
     main()

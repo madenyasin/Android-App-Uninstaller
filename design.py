@@ -21,8 +21,8 @@ class Design:
         self.frame_app_func.place(relx=0.6, rely=0.535, relwidth=0.3, relheight=0.3)
 
         self.n = StringVar(value="Select Your Device")
-        self.device_chose_cmb = ttk.Combobox(self.frame_device_config, width=27, textvariable=self.n, font="Arial 12")
-        self.device_chose_cmb["values"] = ("x", "y", "z")
+        self.device_chose_cmb = ttk.Combobox(self.frame_device_config, width=27, textvariable=self.n, font="Arial 12", state="readonly")
+        self.device_chose_cmb["values"] = ()
         self.device_chose_cmb.pack(anchor="ne", padx=35, pady=20)
         self.device_chose_cmb.current()
 

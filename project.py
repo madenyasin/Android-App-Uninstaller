@@ -1,17 +1,28 @@
-from tkinter import StringVar, Tk
+from tkinter import Tk
 from design import Design
 import platform
 import os
 import tkinter as tk
 
-root = Tk()
+root = tk.Tk()
 design = Design(root)
 
 package_names = []
 serial_number = ""
 
+
+
 def main():
-    list_devices()    
+    global root
+
+    set_colors()
+    
+    list_devices()  
+    if design.device_chose_cmb.get() in ["No device connected!", "Select Your Device"]:
+        print("SELECT DEVİCE!!!!!")  
+        design.uninstall_app_btn['state'] = 'disabled'
+    else:
+        design.uninstall_app_btn['state'] = 'enabled'
     root.mainloop()
     
 # detect user's OS
@@ -114,6 +125,8 @@ def modified_cmb(event):
     global serial_number
     if design.device_chose_cmb.get() not in ["No device connected!", "Select Your Device"]:
         serial_number = design.device_chose_cmb.get()
+        design.uninstall_app_btn['state'] = 'active'
+
     list_apps()
 
 design.device_chose_cmb.bind('<<ComboboxSelected>>', modified_cmb)
@@ -133,6 +146,41 @@ def uninstall_app():
         print(response)
     
 design.uninstall_app_btn.config(command=uninstall_app)
+
+
+def set_colors():
+    color_canvas = "#232323"
+    color_btn = "#1ABC9C"
+    color_frames = "#333333"
+    color_listbox = "#292929"
+    color_searchbox = "#444444"
+
+    design.canvas.configure(bg=color_canvas)
+    design.frame_app_list.config(bg=color_canvas)
+
+    design.frame_device_config.config(bg=color_frames)
+    design.frame_app_func.config(bg=color_frames)
+
+    design.search_box.config(bg=color_searchbox)
+    design.app_list_listbox.config(bg=color_listbox)
+
+    design.refresh_devices_btn.config(bg=color_btn)
+    design.uninstall_app_btn.config(bg=color_btn)
+    design.refresh_app_list_btn.config(bg=color_btn)
+
+    text_color= "#000000"
+    font_name = ("Comic Sans MS", 12, "normal")
+
+
+
+    design.device_chose_cmb.config(foreground=text_color, font=font_name)
+
+    design.uninstall_app_btn.config(foreground=text_color, font=font_name)
+    design.refresh_devices_btn.config(foreground=text_color, font=font_name)
+    design.refresh_app_list_btn.config(foreground=text_color, font=font_name)
+
+    design.search_box.config(foreground="#FFFFFF", font=font_name)
+    design.app_list_listbox.config(foreground="#FFFFFF", font=("Segoe UI", 13, "normal"))
 
 if __name__ == "__main__":
     main()

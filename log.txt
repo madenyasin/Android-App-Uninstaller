@@ -1,0 +1,4 @@
+device: 57U7N17719006449 | state:  -> com.google.android.youtube | date of removal: 2023-08-23 17:11:21.241982
+device: 57U7N17719006449 | state:  -> com.google.android.youtube | date of removal: 2023-08-23 17:11:49.406617
+device: 57U7N17719006449 | state:  -> com.google.android.youtube | date of removal: 2023-08-23 17:11:50.642477
+device: 57U7N17719006449 | state:  -> com.google.android.youtube | date of removal: 2023-08-23 17:11:51.245506

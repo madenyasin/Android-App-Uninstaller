@@ -1,3 +1,4 @@
+import subprocess
 from tkinter import Tk, messagebox
 from design import Design
 import platform
@@ -11,7 +12,7 @@ design = Design(root)
 package_names = []
 serial_number = ""
 log_file = "log.txt"
-
+device_list = []
 
 def main():
     global root
@@ -29,11 +30,13 @@ def get_OS():
 def get_adb_folder():
     return os.path.join(os.getcwd(), ("adb\\" + get_OS() + "\\platform-tools"))
 
-
 def run_command(directory, command):
-    command = f"cd {directory} & {command}"
-    p = os.popen(command)
-    return p.read()
+    full_command = f"cd {directory} && {command}"
+    try:
+        result = subprocess.check_output(full_command, stderr=subprocess.STDOUT, shell=True, universal_newlines=True)
+        return result
+    except subprocess.CalledProcessError as e:
+        return f"Erroe message:\n{e.output}"
 
 
 # get search key
@@ -69,6 +72,7 @@ def Update(data):
 
 
 def list_devices():
+    global device_list
     device_list = run_command(get_adb_folder(), "adb devices").splitlines()[1:-1]
 
     # USB debugging close || No phone connection
@@ -144,6 +148,7 @@ design.device_chose_cmb.bind("<<ComboboxSelected>>", modified_cmb)
 
 
 def uninstall_app():
+    global device_list
     global package_names
     global serial_number
     global log_file
@@ -161,7 +166,7 @@ def uninstall_app():
                 f"adb -s {serial_number} shell pm uninstall --user 0 {package_name}"
             )
             response = run_command(get_adb_folder(), command)
-
+            # Application uninstall successful.    
             if "success" in response.lower():
                 result = f"device: {serial_number} | state: {response.splitlines()[0].lower()} -> {package_name} | date of removal: {datetime.datetime.now()}"
                 print(result)
@@ -169,6 +174,14 @@ def uninstall_app():
                     file.writelines(f"{result}\n")
                 package_names.remove(package_name)
                 list_apps()
+            # Connection failed
+            elif f"'{serial_number}' not found" in response:
+                print(response)
+                messagebox.showerror(
+                    f" Devive '{serial_number}' not found",
+                    "1) Connect your phone.\n"
+                    + "2) Enable USB debugging in your phone's settings.")
+            # Other error messages
             else:
                 print(response)
                 with open(log_file, "a") as file:

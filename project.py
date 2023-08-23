@@ -14,6 +14,7 @@ serial_number = ""
 log_file = "log.txt"
 device_list = []
 
+
 def main():
     global root
     set_colors()
@@ -30,13 +31,16 @@ def get_OS():
 def get_adb_folder():
     return os.path.join(os.getcwd(), ("adb\\" + get_OS() + "\\platform-tools"))
 
+
 def run_command(directory, command):
     full_command = f"cd {directory} && {command}"
     try:
-        result = subprocess.check_output(full_command, stderr=subprocess.STDOUT, shell=True, universal_newlines=True)
+        result = subprocess.check_output(
+            full_command, stderr=subprocess.STDOUT, shell=True, universal_newlines=True
+        )
         return result
     except subprocess.CalledProcessError as e:
-        return f"Erroe message:\n{e.output}"
+        return f"Error message:\n{e.output}"
 
 
 # get search key
@@ -82,7 +86,7 @@ def list_devices():
             "1) Connect your phone.\n"
             + "2) Enable USB debugging in your phone's settings.",
         )
-    
+
     for item in device_list:
         # USB debugging is not allowed.
         if "unauthorized" in item:
@@ -101,10 +105,10 @@ def list_devices():
     # Extraction of serial number.
     for i in range(len(device_list)):
         device_list[i] = device_list[i].replace("\tdevice", "")
-        
+
     print(device_list)
-    design.device_chose_cmb['values'] = device_list
-    
+    design.device_chose_cmb["values"] = device_list
+
 
 design.refresh_devices_btn.config(command=list_devices)
 
@@ -122,16 +126,27 @@ def list_apps():
     else:
         serial_number = design.device_chose_cmb.get()
         command = f"adb -s {serial_number} shell pm list packages"
-        apps = run_command(get_adb_folder(), command).splitlines()
-
-        package_names = []
-        for app in apps:
-            package_names.append(app.replace("package:", ""))
-            design.app_list_listbox.insert("end", app.replace("package:", ""))
-
-
+        response = run_command(get_adb_folder(), command).splitlines()
+        print(response)
+        if "Error" in response[0]:
+            # Connection failed
+            if f"'{serial_number}' not found" in response[1]:
+                messagebox.showerror(
+                    f"Device '{serial_number}' not found",
+                    "1) Connect your phone.\n"
+                    + "2) Enable USB debugging in your phone's settings.",
+                )
+            # Other errors
+            else:
+                messagebox.showerror(f"{response[0]}", f"{response[1]}")
+        else:
+            # Application names have been pulled successfully.
+            package_names = []
+            for item in response:
+                package_names.append(item.replace("package:", ""))
+                design.app_list_listbox.insert("end", item.replace("package:", ""))
+                
 design.refresh_app_list_btn.config(command=list_apps)
-
 
 def modified_cmb(event):
     global serial_number
@@ -166,7 +181,7 @@ def uninstall_app():
                 f"adb -s {serial_number} shell pm uninstall --user 0 {package_name}"
             )
             response = run_command(get_adb_folder(), command)
-            # Application uninstall successful.    
+            # Application uninstall successful.
             if "success" in response.lower():
                 result = f"device: {serial_number} | state: {response.splitlines()[0].lower()} -> {package_name} | date of removal: {datetime.datetime.now()}"
                 print(result)
@@ -178,12 +193,14 @@ def uninstall_app():
             elif f"'{serial_number}' not found" in response:
                 print(response)
                 messagebox.showerror(
-                    f" Devive '{serial_number}' not found",
+                    f"Device '{serial_number}' not found",
                     "1) Connect your phone.\n"
-                    + "2) Enable USB debugging in your phone's settings.")
+                    + "2) Enable USB debugging in your phone's settings.",
+                )
             # Other error messages
             else:
                 print(response)
+                messagebox.showerror("Error", f"{response}")
                 with open(log_file, "a") as file:
                     file.writelines(
                         f"device: {serial_number} | state: {response} -> {package_name} | date of removal: {datetime.datetime.now()}\n"

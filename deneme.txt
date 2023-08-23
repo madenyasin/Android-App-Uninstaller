@@ -1,14 +1,25 @@
+#açık
 ['List of devices attached', 'FPMNW19510002911\tdevice', '']
 ['List of devices attached', 'FPMNW19510002911\tdevice', '']
 ['List of devices attached', 'FPMNW19510002911\tdevice', '']
 ['List of devices attached', 'FPMNW19510002911\tdevice', '']
+#kapalı
 ['List of devices attached', '']
 ['List of devices attached', '']
 ['List of devices attached', '']
 ['List of devices attached', '']
 ['List of devices attached', '']
 ['List of devices attached', '']
+#cihaz yok
+['List of devices attached', '']
+['List of devices attached', '']
+['List of devices attached', '']
+['List of devices attached', '']
+['List of devices attached', '']
+#izin yok
 ['List of devices attached', 'FPMNW19510002911\tunauthorized', '']
 ['List of devices attached', 'FPMNW19510002911\tunauthorized', '']
 ['List of devices attached', 'FPMNW19510002911\tunauthorized', '']
 ['List of devices attached', 'FPMNW19510002911\tunauthorized', '']
+
+['Erroe message:', "adb.exe: device 'FPMNW19510002911' not found"]

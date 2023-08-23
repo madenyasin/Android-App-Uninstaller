@@ -1,28 +1,24 @@
-from tkinter import Tk
+from tkinter import Tk, messagebox
 from design import Design
 import platform
 import os
 import tkinter as tk
+import datetime
 
 root = tk.Tk()
 design = Design(root)
 
 package_names = []
 serial_number = ""
-
-
+log_file = "log.txt"
 
 def main():
     global root
-
     set_colors()
+
+    messagebox.showinfo("Welcome", "First you have to choose a device.")
     
     list_devices()  
-    if design.device_chose_cmb.get() in ["No device connected!", "Select Your Device"]:
-        print("SELECT DEVİCE!!!!!")  
-        design.uninstall_app_btn['state'] = 'disabled'
-    else:
-        design.uninstall_app_btn['state'] = 'enabled'
     root.mainloop()
     
 # detect user's OS
@@ -87,8 +83,6 @@ def list_devices():
                 device_numbers.append(item.replace("\tunauthorized", ""))
             elif "\tdevice" in item:
                 device_numbers.append(item.replace("\tdevice", ""))
-        # print(devices)
-        # print(device_numbers)
         design.device_chose_cmb['values'] = tuple(device_numbers)
     
 design.refresh_devices_btn.config(command=list_devices)
@@ -100,15 +94,12 @@ def list_apps():
     global package_names
 
     design.app_list_listbox.delete(0, tk.END) #listbox clear
-
     design.search_box.delete(0, tk.END)  # Clear existing text
-    # design.search_box.insert(0, "")  # Insert new text
 
     if design.device_chose_cmb.get() in ["No device connected!", "Select Your Device"]:
-        print("SELECT DEVİCE!!!!!")
+        messagebox.showwarning("No device selected", "You must choose a device.")
     else:
         serial_number = design.device_chose_cmb.get()
-        # print(serial_number)
         command = f"adb -s {serial_number} shell pm list packages"
         apps = run_command(get_adb_folder(), command).splitlines()
 
@@ -125,7 +116,7 @@ def modified_cmb(event):
     global serial_number
     if design.device_chose_cmb.get() not in ["No device connected!", "Select Your Device"]:
         serial_number = design.device_chose_cmb.get()
-        design.uninstall_app_btn['state'] = 'active'
+
 
     list_apps()
 
@@ -133,17 +124,29 @@ design.device_chose_cmb.bind('<<ComboboxSelected>>', modified_cmb)
 
 def uninstall_app():
     global package_names
-    package_name = design.app_list_listbox.get(design.app_list_listbox.curselection())   
-
-    command = f"adb -s {serial_number} shell pm uninstall --user 0 {package_name}"
-    response = run_command(get_adb_folder(), command)
-
-    if "success" in response.lower():
-        print(response)
-        package_names.remove(package_name)
-        list_apps()
+    global serial_number
+    global log_file
+    if not package_names:
+        messagebox.showwarning("No application selected", "Please select the application you want to uninstall.")
     else:
-        print(response)
+
+        package_name = design.app_list_listbox.get(design.app_list_listbox.curselection())   
+        if package_name:
+            command = f"adb -s {serial_number} shell pm uninstall --user 0 {package_name}"
+            response = run_command(get_adb_folder(), command)
+
+            if "success" in response.lower():
+                result = f"device: {serial_number} | state: {response.splitlines()[0].lower()} -> {package_name} | date of removal: {datetime.datetime.now()}"
+                print(result)
+                with open(log_file, "a") as file:
+                    file.writelines(f"{result}\n")
+                package_names.remove(package_name)
+                list_apps()
+            else:
+                print(response)
+                with open(log_file, "a") as file:
+                    file.writelines(f"device: {serial_number} | state: {response} -> {package_name} | date of removal: {datetime.datetime.now()}\n")
+
     
 design.uninstall_app_btn.config(command=uninstall_app)
 
@@ -171,8 +174,6 @@ def set_colors():
     text_color= "#000000"
     font_name = ("Comic Sans MS", 12, "normal")
 
-
-
     design.device_chose_cmb.config(foreground=text_color, font=font_name)
 
     design.uninstall_app_btn.config(foreground=text_color, font=font_name)
@@ -181,6 +182,8 @@ def set_colors():
 
     design.search_box.config(foreground="#FFFFFF", font=font_name)
     design.app_list_listbox.config(foreground="#FFFFFF", font=("Segoe UI", 13, "normal"))
+
+
 
 if __name__ == "__main__":
     main()

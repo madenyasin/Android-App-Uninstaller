@@ -114,7 +114,6 @@ design.refresh_devices_btn.config(command=list_devices)
 
 
 def list_apps():
-    apps = []
     global serial_number
     global package_names
 
@@ -170,7 +169,7 @@ def uninstall_app():
     if not package_names:
         messagebox.showwarning(
             "No application selected",
-            "Please select the application you want to uninstall.",
+            "Select your device or refresh app list.",
         )
     else:
         package_name = design.app_list_listbox.get(

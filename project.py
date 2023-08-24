@@ -67,13 +67,6 @@ def save_to_database(serial_number, package_name, process, response):
     conn.close()
     
 
-
-def save_to_file(path, log):
-    log = str(log).splitlines()
-    with open(path, "a") as file:
-        file.writelines(f"{log}\n")
-
-
 # get search key
 def Scankey(event):
     global package_names

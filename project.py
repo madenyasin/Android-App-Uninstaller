@@ -5,6 +5,7 @@ import platform
 import os
 import tkinter as tk
 import datetime
+import sqlite3
 
 root = tk.Tk()
 design = Design(root)
@@ -42,10 +43,34 @@ def run_command(directory, command):
     except subprocess.CalledProcessError as e:
         return f"Error message:\n{e.output}"
 
+
+def save_to_database(serial_number, package_name, process, response):
+    conn = sqlite3.connect("log.db")
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """ CREATE TABLE IF NOT EXISTS log (
+            Serial_Number VARCHAR(75) NOT NULL,
+            Package_Name VARCHAR(150) NOT NULL,
+            Process_Detail VARCHAR(255),
+            Response_Detail VARCHAR(255),
+            Event_Time DATETIME
+        ); """
+    )
+
+    query = "INSERT INTO log (Serial_Number, Package_Name, Process_Detail, Response_Detail, Event_Time) VALUES (?, ?, ?, ?, ?)"
+    cursor.execute(query, (serial_number, package_name, process, response, datetime.datetime.now()))
+
+    conn.commit()
+    conn.close()
+    
+
+
 def save_to_file(path, log):
     log = str(log).splitlines()
     with open(path, "a") as file:
         file.writelines(f"{log}\n")
+
 
 # get search key
 def Scankey(event):
@@ -129,7 +154,6 @@ def list_apps():
         response = run_command(get_adb_folder(), command).splitlines()
         save_to_file("apps.txt", response)
         if "Error" in response[0]:
-            # save_to_log_file(f"")
             # Connection failed
             if f"'{serial_number}' not found" in response[1]:
                 messagebox.showerror(
@@ -146,8 +170,10 @@ def list_apps():
             for item in response:
                 package_names.append(item.replace("package:", ""))
                 design.app_list_listbox.insert("end", item.replace("package:", ""))
-                
+
+
 design.refresh_app_list_btn.config(command=list_apps)
+
 
 def modified_cmb(event):
     global serial_number
@@ -184,13 +210,10 @@ def uninstall_app():
             response = run_command(get_adb_folder(), command)
             # Application uninstall successful.
             if "success" in response.lower():
-                result = f"device: {serial_number} || state: {response.splitlines()[0].lower()} -> {package_name} || date: {datetime.datetime.now()}"
-                save_to_file(log_file, result)
                 package_names.remove(package_name)
                 list_apps()
             # Connection failed
             elif f"'{serial_number}' not found" in response:
-                save_to_file(log_file, f"device: {serial_number} || result: {response} || package name: {package_name} || date: {datetime.datetime.now()}")
                 messagebox.showerror(
                     f"Device '{serial_number}' not found",
                     "1) Connect your phone.\n"
@@ -198,10 +221,9 @@ def uninstall_app():
                 )
             # Other error messages
             else:
-                print(response)
-                save_to_file(log_file, f"device: {serial_number} || result: {response} || package name: {package_name} || date: {datetime.datetime.now()}")
                 messagebox.showerror("Error", f"{response}")
-                
+            
+            save_to_database(serial_number, package_name, command, response)
 
 
 design.uninstall_app_btn.config(command=uninstall_app)

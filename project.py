@@ -45,6 +45,7 @@ def run_command(directory, command):
 
 
 def save_to_database(serial_number, package_name, process, response):
+    global package_names
     conn = sqlite3.connect("log.db")
     cursor = conn.cursor()
 
@@ -54,12 +55,13 @@ def save_to_database(serial_number, package_name, process, response):
             Package_Name VARCHAR(150) NOT NULL,
             Process_Detail VARCHAR(255),
             Response_Detail VARCHAR(255),
-            Event_Time DATETIME
+            Event_Time DATETIME,
+            Currently_Installed_Apps TEXT
         ); """
     )
 
-    query = "INSERT INTO log (Serial_Number, Package_Name, Process_Detail, Response_Detail, Event_Time) VALUES (?, ?, ?, ?, ?)"
-    cursor.execute(query, (serial_number, package_name, process, response, datetime.datetime.now()))
+    query = "INSERT INTO log (Serial_Number, Package_Name, Process_Detail, Response_Detail, Event_Time, Currently_Installed_Apps) VALUES (?, ?, ?, ?, ?, ?)"
+    cursor.execute(query, (serial_number, package_name, process, response, datetime.datetime.now(),  ", ".join(package_names)))
 
     conn.commit()
     conn.close()
@@ -152,7 +154,6 @@ def list_apps():
         serial_number = design.device_chose_cmb.get()
         command = f"adb -s {serial_number} shell pm list packages"
         response = run_command(get_adb_folder(), command).splitlines()
-        save_to_file("apps.txt", response)
         if "Error" in response[0]:
             # Connection failed
             if f"'{serial_number}' not found" in response[1]:

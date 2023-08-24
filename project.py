@@ -54,7 +54,7 @@ def save_to_database(serial_number, package_name, process, response):
             Serial_Number VARCHAR(75) NOT NULL,
             Package_Name VARCHAR(150) NOT NULL,
             Process_Detail VARCHAR(255),
-            Response_Detail VARCHAR(255),
+            Response_Detail TEXT,
             Event_Time DATETIME,
             Currently_Installed_Apps TEXT
         ); """

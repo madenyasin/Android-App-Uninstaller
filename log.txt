@@ -1,14 +1,8 @@
-device: 57U7N17719006449 | state:  -> com.google.android.youtube | date of removal: 2023-08-23 17:11:21.241982
-device: 57U7N17719006449 | state:  -> com.google.android.youtube | date of removal: 2023-08-23 17:11:49.406617
-device: 57U7N17719006449 | state:  -> com.google.android.youtube | date of removal: 2023-08-23 17:11:50.642477
-device: 57U7N17719006449 | state:  -> com.google.android.youtube | date of removal: 2023-08-23 17:11:51.245506
-device: 57U7N17719006449 | state:  -> com.google.android.youtube | date of removal: 2023-08-23 17:21:07.847794
-device: 57U7N17719006449 | state:  -> com.google.android.youtube | date of removal: 2023-08-23 17:21:14.277067
-device: 57U7N17719006449 | state:  -> com.google.android.youtube | date of removal: 2023-08-23 17:27:35.964679
-device: 57U7N17719006449 | state:  -> com.google.android.youtube | date of removal: 2023-08-23 17:28:58.860343
-device: 57U7N17719006449 | state:  -> com.google.android.youtube | date of removal: 2023-08-23 17:29:00.678494
-device: 57U7N17719006449 | state:  -> com.google.android.youtube | date of removal: 2023-08-23 17:29:01.182412
-device: 57U7N17719006449 | state:  -> com.google.android.youtube | date of removal: 2023-08-23 17:29:01.451272
-device: 57U7N17719006449 | state:  -> com.google.android.youtube | date of removal: 2023-08-23 17:29:01.559651
-device: 57U7N17719006449 | state:  -> com.google.android.youtube | date of removal: 2023-08-23 17:40:52.409508
-device: FPMNW19510002911 | state:  -> com.google.android.youtube | date of removal: 2023-08-23 17:41:38.124166
+---------------------------------------------------------------------------------------------------------------
+['device: FPMNW19510002911 || result: Error message:', "adb.exe: device 'FPMNW19510002911' not found", ' || package name: com.huawei.synergy || date: 2023-08-23 21:20:21.688907']
+---------------------------------------------------------------------------------------------------------------
+['device: FPMNW19510002911 || result: Error message:', "adb.exe: device 'FPMNW19510002911' not found", ' || package name: com.android.mediacenter || date: 2023-08-23 21:20:39.595664']
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+['device: FPMNW19510002911 || state: success -> com.csdroid.pkg || date: 2023-08-23 21:29:12.376386']
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+['device: 57U7N17719006449 || state: success -> com.rarlab.rar || date: 2023-08-23 21:29:19.914372']

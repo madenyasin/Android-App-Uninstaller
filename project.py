@@ -42,13 +42,16 @@ def run_command(directory, command):
     except subprocess.CalledProcessError as e:
         return f"Error message:\n{e.output}"
 
+def save_to_file(path, log):
+    log = str(log).splitlines()
+    with open(path, "a") as file:
+        file.writelines(f"{log}\n")
 
 # get search key
 def Scankey(event):
     global package_names
     data = []
     val = event.widget.get()
-    # print(val)
 
     if val == "":
         for item in package_names:
@@ -71,7 +74,6 @@ def Update(data):
 
     # put new data
     for item in data:
-        # print(item)
         design.app_list_listbox.insert("end", item)
 
 
@@ -106,7 +108,6 @@ def list_devices():
     for i in range(len(device_list)):
         device_list[i] = device_list[i].replace("\tdevice", "")
 
-    print(device_list)
     design.device_chose_cmb["values"] = device_list
 
 
@@ -126,8 +127,9 @@ def list_apps():
         serial_number = design.device_chose_cmb.get()
         command = f"adb -s {serial_number} shell pm list packages"
         response = run_command(get_adb_folder(), command).splitlines()
-        print(response)
+        save_to_file("apps.txt", response)
         if "Error" in response[0]:
+            # save_to_log_file(f"")
             # Connection failed
             if f"'{serial_number}' not found" in response[1]:
                 messagebox.showerror(
@@ -182,15 +184,13 @@ def uninstall_app():
             response = run_command(get_adb_folder(), command)
             # Application uninstall successful.
             if "success" in response.lower():
-                result = f"device: {serial_number} | state: {response.splitlines()[0].lower()} -> {package_name} | date of removal: {datetime.datetime.now()}"
-                print(result)
-                with open(log_file, "a") as file:
-                    file.writelines(f"{result}\n")
+                result = f"device: {serial_number} || state: {response.splitlines()[0].lower()} -> {package_name} || date: {datetime.datetime.now()}"
+                save_to_file(log_file, result)
                 package_names.remove(package_name)
                 list_apps()
             # Connection failed
             elif f"'{serial_number}' not found" in response:
-                print(response)
+                save_to_file(log_file, f"device: {serial_number} || result: {response} || package name: {package_name} || date: {datetime.datetime.now()}")
                 messagebox.showerror(
                     f"Device '{serial_number}' not found",
                     "1) Connect your phone.\n"
@@ -199,11 +199,9 @@ def uninstall_app():
             # Other error messages
             else:
                 print(response)
+                save_to_file(log_file, f"device: {serial_number} || result: {response} || package name: {package_name} || date: {datetime.datetime.now()}")
                 messagebox.showerror("Error", f"{response}")
-                with open(log_file, "a") as file:
-                    file.writelines(
-                        f"device: {serial_number} | state: {response} -> {package_name} | date of removal: {datetime.datetime.now()}\n"
-                    )
+                
 
 
 design.uninstall_app_btn.config(command=uninstall_app)

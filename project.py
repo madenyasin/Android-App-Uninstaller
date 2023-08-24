@@ -1,25 +1,25 @@
-import subprocess
-from tkinter import Tk, messagebox
+from tkinter import messagebox
 from design import Design
-import platform
-import os
 import tkinter as tk
+import subprocess
+import platform
 import datetime
 import sqlite3
+import os
 
 root = tk.Tk()
 design = Design(root)
 
 package_names = []
 serial_number = ""
-log_file = "log.txt"
 device_list = []
 
 
 def main():
     global root
-    set_colors()
-
+    
+    
+    setup_gui()
     list_devices()
     root.mainloop()
 
@@ -67,34 +67,33 @@ def save_to_database(serial_number, package_name, process, response):
     conn.close()
     
 
-# get search key
-def Scankey(event):
-    global package_names
+# get search key | data source = source
+def Scankey(source, event):
     data = []
     val = event.widget.get()
 
     if val == "":
-        for item in package_names:
+        for item in source:
             data.append(item)
     else:
-        for item in package_names:
+        for item in source:
             if val.lower() in str(item).lower():
                 data.append(item)
 
-    Update(data)
+    Update(design.app_list_listbox, data)
 
 
-design.search_box.bind("<KeyRelease>", Scankey)
+
 
 
 # update the listbox
-def Update(data):
-    # global app_list
-    design.app_list_listbox.delete(0, "end")
+def Update(listbox, data):
+    # clear list
+    listbox.delete(0, "end")
 
     # put new data
     for item in data:
-        design.app_list_listbox.insert("end", item)
+        listbox.insert("end", item)
 
 
 def list_devices():
@@ -131,7 +130,7 @@ def list_devices():
     design.device_chose_cmb["values"] = device_list
 
 
-design.refresh_devices_btn.config(command=list_devices)
+
 
 
 def list_apps():
@@ -166,7 +165,7 @@ def list_apps():
                 design.app_list_listbox.insert("end", item.replace("package:", ""))
 
 
-design.refresh_app_list_btn.config(command=list_apps)
+
 
 
 def modified_cmb(event):
@@ -180,14 +179,12 @@ def modified_cmb(event):
     list_apps()
 
 
-design.device_chose_cmb.bind("<<ComboboxSelected>>", modified_cmb)
+
 
 
 def uninstall_app():
-    global device_list
     global package_names
     global serial_number
-    global log_file
     if not package_names:
         messagebox.showwarning(
             "No application selected",
@@ -220,7 +217,7 @@ def uninstall_app():
             save_to_database(serial_number, package_name, command, response)
 
 
-design.uninstall_app_btn.config(command=uninstall_app)
+
 
 
 def set_colors():
@@ -257,6 +254,14 @@ def set_colors():
         foreground="#FFFFFF", font=("Segoe UI", 13, "normal")
     )
 
+def setup_gui():
+    design.search_box.bind("<KeyRelease>", lambda event: Scankey(package_names, event))
+    design.refresh_devices_btn.config(command=list_devices)
+    design.refresh_app_list_btn.config(command=list_apps)
+    design.device_chose_cmb.bind("<<ComboboxSelected>>", modified_cmb)
+    design.uninstall_app_btn.config(command=uninstall_app)
+    
 
+    set_colors()
 if __name__ == "__main__":
     main()

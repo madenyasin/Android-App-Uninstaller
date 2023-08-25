@@ -6,6 +6,7 @@ import platform
 import datetime
 import sqlite3
 import os
+from prettytable import PrettyTable
 
 root = tk.Tk()
 design = Design(root)
@@ -21,6 +22,7 @@ def main():
     
     setup_gui()
     list_devices()
+    read_database("log.db", "log")
     root.mainloop()
 
 
@@ -44,13 +46,13 @@ def run_command(directory, command):
         return f"Error message:\n{e.output}"
 
 
-def save_to_database(serial_number, package_name, process, response):
+def save_to_database(path, table_name, data):
     global package_names
-    conn = sqlite3.connect("log.db")
+    conn = sqlite3.connect(path)
     cursor = conn.cursor()
 
     cursor.execute(
-        """ CREATE TABLE IF NOT EXISTS log (
+        f""" CREATE TABLE IF NOT EXISTS {table_name} (
             Serial_Number VARCHAR(75) NOT NULL,
             Package_Name VARCHAR(150) NOT NULL,
             Process_Detail VARCHAR(255),
@@ -61,11 +63,42 @@ def save_to_database(serial_number, package_name, process, response):
     )
 
     query = "INSERT INTO log (Serial_Number, Package_Name, Process_Detail, Response_Detail, Event_Time, Currently_Installed_Apps) VALUES (?, ?, ?, ?, ?, ?)"
-    cursor.execute(query, (serial_number, package_name, process, response, datetime.datetime.now(),  ", ".join(package_names)))
+    cursor.execute(query, (data[0], data[1], data[2], data[3], datetime.datetime.now(),  ", ".join(package_names)))
 
     conn.commit()
     conn.close()
+
+    read_database(path, table_name)
     
+
+def read_database(path, table_name):
+    conn = sqlite3.connect(path)
+    cursor = conn.cursor()
+    
+    # to select all column we will use
+    statement = f'''SELECT * FROM {table_name}'''
+    cursor.execute(statement)
+
+    output = cursor.fetchall()
+    write_log(output, "log.json")
+        
+    conn.commit()
+    conn.close()
+
+
+def write_log(output, txt_path):
+    table = PrettyTable()
+    table.field_names = ["Serial_Number", "Package_Name", "Process_Detail", "Response_Detail", "Event_Time", "Currently_Installed_Apps"]
+    
+    for row in output:
+        table.add_row(row, divider=True)
+    
+    with open(txt_path, "w") as file:
+        file.write(table.get_json_string())
+        
+
+
+
 
 # get search key | data source = source
 def Scankey(source, event):
@@ -214,7 +247,7 @@ def uninstall_app():
             else:
                 messagebox.showerror("Error", f"{response}")
             
-            save_to_database(serial_number, package_name, command, response)
+            save_to_database("log.db", "log", [serial_number, package_name, command, response])
 
 
 

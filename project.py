@@ -1,3 +1,4 @@
+from prettytable import PrettyTable
 from tkinter import messagebox
 from design import Design
 import tkinter as tk
@@ -6,7 +7,6 @@ import platform
 import datetime
 import sqlite3
 import os
-from prettytable import PrettyTable
 
 root = tk.Tk()
 design = Design(root)

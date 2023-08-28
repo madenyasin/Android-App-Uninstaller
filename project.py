@@ -21,7 +21,10 @@ def main():
 
     setup_gui()
     list_devices()
-    read_database("log.db", "log")
+    if get_OS() != "windows":
+        print("*")
+        # adb file has been granted execute permission
+        run_command(get_adb_folder(), "chmod +x adb")
     root.mainloop()
 
 
@@ -31,16 +34,17 @@ def get_OS():
 
 
 def get_adb_folder():
-    return os.path.join(os.getcwd(), ("adb\\" + get_OS() + "\\platform-tools"))
+    return os.path.join(os.getcwd(), ("adb\\" + get_OS() + "\\platform-tools")).replace("\\", "/")
 
 
 def run_command(directory, command):
-    full_command = f"cd {directory} && {command}"
-
     # Edited command for Linux and MacOS
     if get_OS() != "windows":
-        full_command = full_command.replace("adb", "./adb")
-        
+        print("command-osss")
+        if "chmod" not in command:
+            command = command.replace("adb", "./adb")
+
+    full_command = f"cd {directory} && {command}"
     try:
         result = subprocess.check_output(
             full_command, stderr=subprocess.STDOUT, shell=True, universal_newlines=True

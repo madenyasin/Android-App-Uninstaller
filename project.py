@@ -18,8 +18,7 @@ device_list = []
 
 def main():
     global root
-    
-    
+
     setup_gui()
     list_devices()
     read_database("log.db", "log")
@@ -63,41 +62,55 @@ def save_to_database(path, table_name, data):
     )
 
     query = "INSERT INTO log (Serial_Number, Package_Name, Process_Detail, Response_Detail, Event_Time, Currently_Installed_Apps) VALUES (?, ?, ?, ?, ?, ?)"
-    cursor.execute(query, (data[0], data[1], data[2], data[3], datetime.datetime.now(),  ", ".join(package_names)))
+    cursor.execute(
+        query,
+        (
+            data[0],
+            data[1],
+            data[2],
+            data[3],
+            datetime.datetime.now(),
+            ", ".join(package_names),
+        ),
+    )
 
     conn.commit()
     conn.close()
 
     read_database(path, table_name)
-    
+
 
 def read_database(path, table_name):
     conn = sqlite3.connect(path)
     cursor = conn.cursor()
-    
+
     # to select all column we will use
-    statement = f'''SELECT * FROM {table_name}'''
+    statement = f"""SELECT * FROM {table_name}"""
     cursor.execute(statement)
 
     output = cursor.fetchall()
     write_log(output, "log.json")
-        
+
     conn.commit()
     conn.close()
 
 
 def write_log(output, txt_path):
     table = PrettyTable()
-    table.field_names = ["Serial_Number", "Package_Name", "Process_Detail", "Response_Detail", "Event_Time", "Currently_Installed_Apps"]
-    
+    table.field_names = [
+        "Serial_Number",
+        "Package_Name",
+        "Process_Detail",
+        "Response_Detail",
+        "Event_Time",
+        "Currently_Installed_Apps",
+    ]
+
     for row in output:
         table.add_row(row, divider=True)
-    
+
     with open(txt_path, "w") as file:
         file.write(table.get_json_string())
-        
-
-
 
 
 # get search key | data source = source
@@ -114,9 +127,6 @@ def Scankey(source, event):
                 data.append(item)
 
     Update(design.app_list_listbox, data)
-
-
-
 
 
 # update the listbox
@@ -163,9 +173,6 @@ def list_devices():
     design.device_chose_cmb["values"] = device_list
 
 
-
-
-
 def list_apps():
     global serial_number
     global package_names
@@ -198,9 +205,6 @@ def list_apps():
                 design.app_list_listbox.insert("end", item.replace("package:", ""))
 
 
-
-
-
 def modified_cmb(event):
     global serial_number
     if design.device_chose_cmb.get() not in [
@@ -210,9 +214,6 @@ def modified_cmb(event):
         serial_number = design.device_chose_cmb.get()
 
     list_apps()
-
-
-
 
 
 def uninstall_app():
@@ -246,11 +247,10 @@ def uninstall_app():
             # Other error messages
             else:
                 messagebox.showerror("Error", f"{response}")
-            
-            save_to_database("log.db", "log", [serial_number, package_name, command, response])
 
-
-
+            save_to_database(
+                "log.db", "log", [serial_number, package_name, command, response]
+            )
 
 
 def set_colors():
@@ -287,14 +287,16 @@ def set_colors():
         foreground="#FFFFFF", font=("Segoe UI", 13, "normal")
     )
 
+
 def setup_gui():
     design.search_box.bind("<KeyRelease>", lambda event: Scankey(package_names, event))
     design.refresh_devices_btn.config(command=list_devices)
     design.refresh_app_list_btn.config(command=list_apps)
     design.device_chose_cmb.bind("<<ComboboxSelected>>", modified_cmb)
     design.uninstall_app_btn.config(command=uninstall_app)
-    
 
     set_colors()
+
+
 if __name__ == "__main__":
     main()

@@ -36,6 +36,11 @@ def get_adb_folder():
 
 def run_command(directory, command):
     full_command = f"cd {directory} && {command}"
+
+    # Edited command for Linux and MacOS
+    if get_OS() != "windows":
+        full_command = full_command.replace("adb", "./adb")
+        
     try:
         result = subprocess.check_output(
             full_command, stderr=subprocess.STDOUT, shell=True, universal_newlines=True

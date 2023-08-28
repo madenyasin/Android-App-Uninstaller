@@ -14,17 +14,20 @@ design = Design(root)
 package_names = []
 serial_number = ""
 device_list = []
-
+database_path = "log_database.db"
+table_name = "log"
 
 def main():
     global root
 
     setup_gui()
     list_devices()
+
     if get_OS() != "windows":
-        print("*")
         # adb file has been granted execute permission
         run_command(get_adb_folder(), "chmod +x adb")
+
+    read_database(database_path, table_name)
     root.mainloop()
 
 
@@ -40,7 +43,6 @@ def get_adb_folder():
 def run_command(directory, command):
     # Edited command for Linux and MacOS
     if get_OS() != "windows":
-        print("command-osss")
         if "chmod" not in command:
             command = command.replace("adb", "./adb")
 
@@ -90,18 +92,19 @@ def save_to_database(path, table_name, data):
 
 
 def read_database(path, table_name):
-    conn = sqlite3.connect(path)
-    cursor = conn.cursor()
+    if os.path.exists(path):
+        conn = sqlite3.connect(path)
+        cursor = conn.cursor()
 
-    # to select all column we will use
-    statement = f"""SELECT * FROM {table_name}"""
-    cursor.execute(statement)
+        # to select all column we will use
+        statement = f"""SELECT * FROM {table_name}"""
+        cursor.execute(statement)
 
-    output = cursor.fetchall()
-    write_log(output, "log.json")
+        output = cursor.fetchall()
+        write_log(output, "log.json")
 
-    conn.commit()
-    conn.close()
+        conn.commit()
+        conn.close()
 
 
 def write_log(output, txt_path):
@@ -257,8 +260,7 @@ def uninstall_app():
             else:
                 messagebox.showerror("Error", f"{response}")
 
-            save_to_database(
-                "log.db", "log", [serial_number, package_name, command, response]
+            save_to_database(database_path, table_name, [serial_number, package_name, command, response]
             )
 
 

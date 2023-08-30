@@ -17,6 +17,7 @@ device_list = []
 database_path = "log_database.db"
 table_name = "log"
 
+
 def main():
     global root
 
@@ -37,7 +38,9 @@ def get_OS():
 
 
 def get_adb_folder():
-    return os.path.join(os.getcwd(), ("adb\\" + get_OS() + "\\platform-tools")).replace("\\", "/")
+    return os.path.join(os.getcwd(), ("adb\\" + get_OS() + "\\platform-tools")).replace(
+        "\\", "/"
+    )
 
 
 def run_command(directory, command):
@@ -260,7 +263,10 @@ def uninstall_app():
             else:
                 messagebox.showerror("Error", f"{response}")
 
-            save_to_database(database_path, table_name, [serial_number, package_name, command, response]
+            save_to_database(
+                database_path,
+                table_name,
+                [serial_number, package_name, command, response],
             )
 
 
@@ -285,7 +291,7 @@ def set_colors():
     design.refresh_app_list_btn.config(bg=color_btn)
 
     text_color = "#000000"
-    font_name = ("Comic Sans MS", 12, "normal")
+    font_name = ("Georgia", 12, "normal")
 
     design.device_chose_cmb.config(foreground=text_color, font=font_name)
 
@@ -294,9 +300,7 @@ def set_colors():
     design.refresh_app_list_btn.config(foreground=text_color, font=font_name)
 
     design.search_box.config(foreground="#FFFFFF", font=font_name)
-    design.app_list_listbox.config(
-        foreground="#FFFFFF", font=("Segoe UI", 13, "normal")
-    )
+    design.app_list_listbox.config(foreground="#FFFFFF", font=("Georgia", 14, "normal"))
 
 
 def setup_gui():

@@ -8,6 +8,7 @@ class Design:
         self.root.title("Android App Uninstaller with ADB")
         self.root.geometry("900x450")
         self.root.resizable(width=False, height=False)
+        self.root.iconphoto(False, PhotoImage(file = "sample.png"))
 
         self.canvas = Canvas(self.root, height=450, width=900)
         self.canvas.pack()

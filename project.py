@@ -44,6 +44,8 @@ def get_adb_folder():
 
 
 def run_command(directory, command):
+    if get_OS() not in ["windows", "linux", "darwin"]:
+        raise RuntimeError("Your operating system does not support it.")
     # Edited command for Linux and MacOS
     if get_OS() != "windows":
         if "chmod" not in command:

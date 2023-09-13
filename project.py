@@ -124,7 +124,7 @@ def write_log(output, txt_path):
     ]
 
     for row in output:
-        table.add_row(row, divider=True)
+        table.add_row(row)
 
     with open(txt_path, "w") as file:
         file.write(table.get_json_string())

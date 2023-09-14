@@ -36,7 +36,7 @@ sudo apt-get install python3-tk
   cd Android-App-Uninstaller
 ```
 
-3. Install the required libraries listed in the `requirements.txt` file using the following command:
+3. Install the required libraries listed in the `requirements.txt` file using the following command:\
    
 **Windows:**
 ```bash
@@ -51,7 +51,7 @@ sudo apt-get install python3-tk
 
 1. Connect your Android phone to the computer. (USB debugging must be enabled, and permission for USB debugging should be granted.)
 
-2. Run the application by executing the following command:
+2. Run the application by executing the following command:\
    
 **Windows:**
 ```bash

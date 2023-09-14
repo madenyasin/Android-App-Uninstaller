@@ -37,6 +37,7 @@ sudo apt-get install python3-tk
 ```
 
 3. Install the required libraries listed in the `requirements.txt` file using the following command:
+   
 **Windows:**
 ```bash
   pip install -r requirements.txt
@@ -51,6 +52,7 @@ sudo apt-get install python3-tk
 1. Connect your Android phone to the computer. (USB debugging must be enabled, and permission for USB debugging should be granted.)
 
 2. Run the application by executing the following command:
+   
 **Windows:**
 ```bash
   python project.py

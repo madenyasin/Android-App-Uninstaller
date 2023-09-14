@@ -11,7 +11,7 @@ Follow these steps to get the project up and running on your local machine.
 ### Prerequisites
 
 - Python (3 or higher)
-- Ubuntu: Install the required package and library by running the following commands:
+- Debian-based distributions: Install the required package and library by running the following commands:
 
 ```bash
 sudo apt-get update
@@ -37,9 +37,13 @@ sudo apt-get install python3-tk
 ```
 
 3. Install the required libraries listed in the `requirements.txt` file using the following command:
-
+**Windows:**
 ```bash
   pip install -r requirements.txt
+```
+**Linux, MacOS:**
+```bash
+  pip3 install -r requirements.txt
 ```
 
 ## Usage
@@ -47,10 +51,11 @@ sudo apt-get install python3-tk
 1. Connect your Android phone to the computer. (USB debugging must be enabled, and permission for USB debugging should be granted.)
 
 2. Run the application by executing the following command:
-
+**Windows:**
 ```bash
   python project.py
 ```
+**Linux, MacOS:**
 ```bash
   python3 project.py
 ```
@@ -74,5 +79,3 @@ When an application is uninstalled, information about the uninstalled app is rec
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
-
-

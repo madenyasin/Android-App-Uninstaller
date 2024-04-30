@@ -1,5 +1,4 @@
 # Android App Uninstaller using ADB (no-root)
-#### Video Demo:  <[URL HERE](https://www.youtube.com/watch?v=3yWtmrhQrGI)>
 
 This project provides a user-friendly form application developed using the Python programming language and the Tkinter library. The application's primary purpose is to facilitate the removal of system applications on Android devices using the Android Debug Bridge (ADB). It allows users to uninstall applications like Google's pre-installed apps (e.g., YouTube) and manufacturer-specific apps that are typically not removable through normal means on the device.
 

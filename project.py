@@ -201,7 +201,7 @@ def list_apps():
         messagebox.showwarning("No device selected", "You must choose a device.")
     else:
         serial_number = design.device_chose_cmb.get()
-        command = f"adb -s {serial_number} shell pm list packages"
+        command = f"adb -s {serial_number} shell pm list packages --user 0"
         response = run_command(get_adb_folder(), command).splitlines()
         if "Error" in response[0]:
             # Connection failed
